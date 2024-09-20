@@ -10,8 +10,15 @@ const app = express();
 
 connectDB();
 
+const corsOptions = {
+    origin: 'https://task-management-six-xi.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ extended: false }));
 
 // Define Routes
