@@ -62,7 +62,7 @@ Body:
     {
         "username": "user123",
         "email": "user@example.com",
-        "password": "Password@123"
+        "password": "VGF0YUAxMjM="  // base64
     }
 
 Response:
