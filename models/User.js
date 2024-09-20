@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
     minlength: [4, messages.validation.username],
     validate: {
       validator: function (value) {

@@ -5,19 +5,27 @@ import { messages } from '../constants/messages.js';
 import { statusCodes } from '../constants/statusCodes.js';
 import { config } from '../config/config.js';
 
-// TODO: password will be base64 encoded in payload
-
 // Register a new user
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        let user = await User.findOne({ email });
+        const plainPassword = Buffer.from(password, 'base64').toString('utf-8');
+
+        let user = await User.findOne({
+            $or: [{ email }, { username }]
+        });
+
         if (user) {
-            return res.status(statusCodes.BAD_REQUEST).json({ msg: messages.auth.userExists });
+            if (user.email === email) {
+                return res.status(statusCodes.BAD_REQUEST).json({ msg: messages.auth.emailExists });
+            }
+            if (user.username === username) {
+                return res.status(statusCodes.BAD_REQUEST).json({ msg: messages.auth.usernameExists });
+            }
         }
 
-        user = new User({ username, email, password });
+        user = new User({ username, email, password: plainPassword });
         await user.save();
 
         // Generate JWT token
@@ -43,12 +51,14 @@ export const login = async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        const plainPassword = Buffer.from(password, 'base64').toString('utf-8');
+
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(statusCodes.BAD_REQUEST).json({ msg: messages.auth.invalidCredentials });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(plainPassword, user.password);
         if (!isMatch) {
             return res.status(statusCodes.BAD_REQUEST).json({ msg: messages.auth.invalidCredentials });
         }

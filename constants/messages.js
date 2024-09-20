@@ -1,6 +1,7 @@
 export const messages = {
     auth: {
-        userExists: 'User already exists',
+        emailExists: 'Email already exists',
+        usernameExists: 'Username already exist',
         userCreated: 'User created successfully',
         invalidCredentials: 'Invalid credentials',
         authDenied: 'Authorization denied',
